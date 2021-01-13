@@ -7,50 +7,57 @@
 
     <body>
         <script>
-            var state = {
-                result: null,
-                setResult: function(result) {state.result = result}
+            var servicesState = {
+                services: null
             }
 
-            function foo() {
-                var search = document.querySelector("#search .searchInput").value;
-                fetch('http://localhost:8080/tests/my-service/3/' + search)
+
+            function fetchServices() {
+                return fetch('http://localhost:8080/services')
                 .then(response => response.json())
                 .then(data => {
-                    state.setResult(JSON.stringify(data));
+                    servicesState.services = data;
                     m.redraw();
                 }).catch(function (err) {
                     console.warn('Something went wrong.', err);
                 });
             }
 
-            var Search = {
+            var ServiceResult = {
                 view: function(vnode) {
-                    return m("div",
-                        {id: "search"},
-                        m("input", {class: "searchInput"}, ""),
-                        m("button", {class: "foo", onclick: foo}, "Hello"));
-                }
-            };
-
-            var Results = {
-                view: function(vnode) {
-                    return m("div", {class: "results"}, state.result)
+                    return m("p", vnode.attrs.Name);
                 }
             }
 
-            var HomePage = {
+            var ServiceResults = {
+                oninit: function() {
+                    fetchServices()
+                    .then(_ => m.redraw());
+                },
                 view: function(vnode) {
-                    return m("div", {class: "homepage"},
-                        m(Search, "Hello"),
-                        m(Results, "Waiting"));
+                    if(servicesState.services === null) {
+                        return m("div", {class: "results"}, "Searching")
+                    } else {
+                        var args = ["div", {class: "results"}];
+                        console.log(servicesState.services);
+                        args = args.concat(servicesState.services.map(x => m(ServiceResult, x)));
+                        return m.apply(this, args);
+                    }
+                }
+            }
+
+            var ServiceView = {
+                view: function(vnode) {
+                    return m("div",
+                        m("p", "Some services"),
+                        m(ServiceResults));
                 }
             }
 
             var App = {
                 view: function(vnode) {
                     return m("div",
-                        m(HomePage));
+                        m(ServiceView));
                 }
             };
 

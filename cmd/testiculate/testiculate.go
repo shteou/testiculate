@@ -36,6 +36,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.Handle("/status", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(controllers.StatusHandler)))
+	r.Handle("/services", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.ServicesGetHandler)))
 	r.Handle("/tests/{service}/{pr}", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.TestPrGetHandler))).
 		Methods("GET")
 	r.Handle("/tests/{service}/{pr}/{build}", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.TestBuildGetHandler))).

@@ -18,11 +18,6 @@ func validateServiceName(s string) bool {
 	return true
 }
 
-func errorResponse(w http.ResponseWriter, r *http.Request, err error) {
-	w.WriteHeader(http.StatusInternalServerError)
-	json.NewEncoder(w).Encode(map[string]string{"error_string": err.Error()})
-}
-
 func (c *Context) TestBuildGetHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
