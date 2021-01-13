@@ -39,11 +39,18 @@
                 }
             }
 
+            var HomePage = {
+                view: function(vnode) {
+                    return m("div", {class: "homepage"},
+                        m(Search, "Hello"),
+                        m(Results, "Waiting"));
+                }
+            }
+
             var App = {
                 view: function(vnode) {
                     return m("div",
-                        m(Search, "Hello"),
-                        m(Results, "Waiting"));
+                        m(HomePage));
                 }
             };
 
