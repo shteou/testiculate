@@ -47,9 +47,9 @@
                 }
             };
 
-
-            m.mount(document.body, App);
-
+            m.route(document.body, "/" + window.location.pathname, {
+                "/": App,
+            })
         </script>
     </body>
 </html>

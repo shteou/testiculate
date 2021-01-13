@@ -41,7 +41,9 @@ func main() {
 		Methods("GET")
 	r.Handle("/tests/{service}/{pr}/{build}", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.TestsHandler))).
 		Methods("PUT")
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+	r.PathPrefix("/").Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./static/index.html")
+	}))
 	http.Handle("/", r)
 
 	log.Println("Listening on port 8080...")
