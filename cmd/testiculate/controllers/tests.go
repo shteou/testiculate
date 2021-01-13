@@ -47,8 +47,20 @@ func (c *Context) TestBuildGetHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	service := models.Service{Name: serviceName}
+	res := c.DB.Where(&service).First(&service)
+
+	if res.Error != nil {
+		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+			w.WriteHeader(http.StatusNotFound)
+		} else {
+			errorResponse(w, r, res.Error)
+		}
+		return
+	}
+
 	var results []models.Result
-	tx := c.DB.Where(&models.Result{PR: prNum, Build: buildNum, Service: serviceName}).First(&results)
+	tx := c.DB.Where(&models.Result{PR: prNum, Build: buildNum, Service: service}).First(&results)
 	if tx.Error != nil {
 		if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
 			w.WriteHeader(http.StatusNotFound)
@@ -77,8 +89,20 @@ func (c *Context) TestPrGetHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	service := models.Service{Name: serviceName}
+	res := c.DB.Where(&service).First(&service)
+
+	if res.Error != nil {
+		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+			w.WriteHeader(http.StatusNotFound)
+		} else {
+			errorResponse(w, r, res.Error)
+		}
+		return
+	}
+
 	var results []models.Result
-	tx := c.DB.Where(&models.Result{PR: prNum, Service: serviceName}).Find(&results)
+	tx := c.DB.Where(&models.Result{PR: prNum, Service: service}).Find(&results)
 	if tx.Error != nil {
 		if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
 			w.WriteHeader(http.StatusNotFound)
@@ -131,14 +155,22 @@ func (c *Context) TestsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	suiteTotals := suites[0].Totals
-	result := models.Result{Errored: suiteTotals.Error, Skipped: suiteTotals.Skipped,
-		Passed: suiteTotals.Passed, Failed: suiteTotals.Failed,
-		Service: params["service"], PR: prNum, Build: buildNum}
-
-	res := c.DB.Create(&result)
+	service := models.Service{Name: serviceName}
+	res := c.DB.FirstOrCreate(&service, &service)
 	if res.Error != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to write record"})
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to write service record"})
+		return
+	}
+
+	result := models.Result{Errored: suiteTotals.Error, Skipped: suiteTotals.Skipped,
+		Passed: suiteTotals.Passed, Failed: suiteTotals.Failed,
+		Service: service, PR: prNum, Build: buildNum}
+
+	res = c.DB.Create(&result)
+	if res.Error != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to write result record"})
 		return
 	}
 

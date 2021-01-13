@@ -24,6 +24,7 @@ func main() {
 		log.Fatal("Unable ")
 	}
 
+	db.AutoMigrate(&models.Service{})
 	db.AutoMigrate(&models.Result{})
 
 	context := controllers.Context{DB: db}
