@@ -1,0 +1,55 @@
+<html>
+    <head>
+        <index>Testiculate</index>
+        <script src="https://unpkg.com/mithril/mithril.js"></script>
+
+    </head>
+
+    <body>
+        <script>
+            var state = {
+                result: null,
+                setResult: function(result) {state.result = result}
+            }
+
+            function foo() {
+                var search = document.querySelector("#search .searchInput").value;
+                fetch('http://localhost:8080/tests/my-service/3/' + search)
+                .then(response => response.json())
+                .then(data => {
+                    state.setResult(JSON.stringify(data));
+                    m.redraw();
+                }).catch(function (err) {
+                    console.warn('Something went wrong.', err);
+                });
+            }
+
+            var Search = {
+                view: function(vnode) {
+                    return m("div",
+                        {id: "search"},
+                        m("input", {class: "searchInput"}, ""),
+                        m("button", {class: "foo", onclick: foo}, "Hello"));
+                }
+            };
+
+            var Results = {
+                view: function(vnode) {
+                    return m("div", {class: "results"}, state.result)
+                }
+            }
+
+            var App = {
+                view: function(vnode) {
+                    return m("div",
+                        m(Search, "Hello"),
+                        m(Results, "Waiting"));
+                }
+            };
+
+
+            m.mount(document.body, App);
+
+        </script>
+    </body>
+</html>
