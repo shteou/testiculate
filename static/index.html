@@ -54,16 +54,17 @@
             }
         }
 
-        var App = {
+        var ResultsView = {
             view: function(vnode) {
-                return m("div", {class: "app"},
-                    m(ServiceView));
+                return m("div", {class: "resultsView"},
+                    m("p", "Cool cooll cool"));
             }
-        };
+        }
 
         m.route(document.body, "/" + window.location.pathname, {
-            "/": App,
-        })
+            "/": ServiceView,
+            "/results": ResultsView
+        });
     </script>
 </body>
 </html>
