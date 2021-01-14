@@ -1,0 +1,14 @@
+.app {
+  display: flex;
+  justify-content: center;
+}
+
+.serviceView {
+    background-color: lightgrey;
+    padding: 1em;
+    width: 80%;
+}
+
+.serviceResult {
+    background-color: cadetblue;
+}

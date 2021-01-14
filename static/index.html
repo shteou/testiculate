@@ -1,69 +1,69 @@
-<html>
-    <head>
-        <index>Testiculate</index>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Testiculate</title>
         <script src="https://unpkg.com/mithril/mithril.js"></script>
+        <link rel="stylesheet" href="http://localhost:8080/main.css">
+  </head>
+  <body>
+    <script>
+        var servicesState = {
+            services: null
+        }
 
-    </head>
+        function fetchServices() {
+            return fetch('http://localhost:8080/services')
+            .then(response => response.json())
+            .then(data => {
+                servicesState.services = data;
+                m.redraw();
+            }).catch(function (err) {
+                console.warn('Something went wrong.', err);
+            });
+        }
 
-    <body>
-        <script>
-            var servicesState = {
-                services: null
+        var ServiceResult = {
+            view: function(vnode) {
+                return m("div", {class: "serviceResult"}, 
+                    m("p", vnode.attrs.Name));
             }
+        }
 
-
-            function fetchServices() {
-                return fetch('http://localhost:8080/services')
-                .then(response => response.json())
-                .then(data => {
-                    servicesState.services = data;
-                    m.redraw();
-                }).catch(function (err) {
-                    console.warn('Something went wrong.', err);
-                });
-            }
-
-            var ServiceResult = {
-                view: function(vnode) {
-                    return m("p", vnode.attrs.Name);
+        var ServiceResults = {
+            oninit: function() {
+                fetchServices()
+                .then(_ => m.redraw());
+            },
+            view: function(vnode) {
+                if(servicesState.services === null) {
+                    return m("div", {class: "serviceResults"}, "Searching")
+                } else {
+                    var args = ["div", {class: "serviceResults"}];
+                    args = args.concat(servicesState.services.map(x => m(ServiceResult, x)));
+                    return m.apply(this, args);
                 }
             }
+        }
 
-            var ServiceResults = {
-                oninit: function() {
-                    fetchServices()
-                    .then(_ => m.redraw());
-                },
-                view: function(vnode) {
-                    if(servicesState.services === null) {
-                        return m("div", {class: "results"}, "Searching")
-                    } else {
-                        var args = ["div", {class: "results"}];
-                        console.log(servicesState.services);
-                        args = args.concat(servicesState.services.map(x => m(ServiceResult, x)));
-                        return m.apply(this, args);
-                    }
-                }
+        var ServiceView = {
+            view: function(vnode) {
+                return m("div", {class: "serviceView"},
+                    m("p", "Services"),
+                    m(ServiceResults));
             }
+        }
 
-            var ServiceView = {
-                view: function(vnode) {
-                    return m("div",
-                        m("p", "Some services"),
-                        m(ServiceResults));
-                }
+        var App = {
+            view: function(vnode) {
+                return m("div", {class: "app"},
+                    m(ServiceView));
             }
+        };
 
-            var App = {
-                view: function(vnode) {
-                    return m("div",
-                        m(ServiceView));
-                }
-            };
-
-            m.route(document.body, "/" + window.location.pathname, {
-                "/": App,
-            })
-        </script>
-    </body>
+        m.route(document.body, "/" + window.location.pathname, {
+            "/": App,
+        })
+    </script>
+</body>
 </html>
