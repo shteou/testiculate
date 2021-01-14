@@ -23,10 +23,10 @@
             });
         }
 
-        var ServiceResult = {
+        var ServiceEntry = {
             view: function(vnode) {
-                return m("div", {class: "serviceResult"}, 
-                    m("p", vnode.attrs.Name));
+                return m("div", {class: "serviceEntry"}, 
+                    m("button", {onclick: () => m.route.set("/results/" + vnode.attrs.ID, {name: vnode.attrs.Name})}, vnode.attrs.Name));
             }
         }
 
@@ -37,10 +37,10 @@
             },
             view: function(vnode) {
                 if(servicesState.services === null) {
-                    return m("div", {class: "serviceResults"}, "Searching")
+                    return m("div", {class: "serviceEntries"}, "Searching")
                 } else {
                     var args = ["div", {class: "serviceResults"}];
-                    args = args.concat(servicesState.services.map(x => m(ServiceResult, x)));
+                    args = args.concat(servicesState.services.map(x => m(ServiceEntry, x)));
                     return m.apply(this, args);
                 }
             }
@@ -54,16 +54,56 @@
             }
         }
 
+        var ResultEntry = {
+            view: function(vnode) {
+                return m("div", {class: "resultEntry"},
+                    m("p", JSON.stringify(vnode.attrs)));
+            }
+        }
+
+        var resultsState = {
+            results: null
+        }
+
+        function fetchServiceResults(service) {
+            return fetch('http://localhost:8080/tests/' + service)
+            .then(response => response.json())
+            .then(data => {
+                resultsState.results = data;
+                m.redraw();
+            }).catch(function (err) {
+                console.warn('Something went wrong.', err);
+            });
+        }
+
+        var ResultEntries = {
+            oninit: function(vnode) {
+                fetchServiceResults(vnode.attrs.name)
+                .then(_ => m.redraw());
+            },
+            view: function(vnode) {
+                if(resultsState.results === null) {
+                    return m("div", {class: "resultEntries"}, "Searching")
+                } else {
+                    var args = ["div", {class: "resultEntries"}];
+                    args = args.concat(resultsState.results.map(x => m(ResultEntry, x)));
+                    return m.apply(this, args);
+                }
+                return m.apply(this, args)
+            }
+        }
+
         var ResultsView = {
             view: function(vnode) {
                 return m("div", {class: "resultsView"},
-                    m("p", "Cool cooll cool"));
+                    m("p", "Service - " + m.route.param("name"),
+                    m(ResultEntries, {name: m.route.param("name")})));
             }
         }
 
         m.route(document.body, "/" + window.location.pathname, {
             "/": ServiceView,
-            "/results": ResultsView
+            "/results/:serviceid": ResultsView
         });
     </script>
 </body>
