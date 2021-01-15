@@ -8,13 +8,13 @@ body {
 .serviceView {
     background-color: lightgrey;
     margin: 0.2em;
-    width: 80%;
+    min-width: 80%;
 }
 
 .resultsView {
     background-color: lightgrey;
     margin: 0.2em;
-    width: 80%;
+    min-width: 80%;
 }
 
 /* serviceView components */
@@ -25,10 +25,28 @@ body {
 
 /* resultsView components */
 
-.resultEntry {
-
+.resultEntries {
+    min-height: 90vh;
+    display: flex;
 }
 
-.resultEntries {
-    
+.resultEntry {
+    margin: 0px;
+    margin-left: 1em;
+}
+
+.resultDayColumnDate {
+    transform: rotate(-40deg);
+}
+
+.result {
+    font-size: 2em;
+}
+
+.resultPassed {
+    color: darkgreen;
+}
+
+.resultFailed {
+    color: crimson;
 }
