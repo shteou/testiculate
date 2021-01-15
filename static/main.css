@@ -36,6 +36,7 @@ body {
 }
 
 .resultDayColumnDate {
+    margin-left: 9px;
     transform: rotate(-40deg);
 }
 
