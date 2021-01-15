@@ -8,7 +8,7 @@
   </head>
   <body>
     <script>
-        var servicesState = {
+        let servicesState = {
             services: null
         }
 
@@ -23,14 +23,14 @@
             });
         }
 
-        var ServiceEntry = {
+        const ServiceEntry = {
             view: function(vnode) {
                 return m("div", {class: "serviceEntry"}, 
                     m("button", {onclick: () => m.route.set("/results/" + vnode.attrs.ID, {name: vnode.attrs.Name})}, vnode.attrs.Name));
             }
         }
 
-        var ServiceResults = {
+        const ServiceResults = {
             oninit: function() {
                 fetchServices()
                 .then(_ => m.redraw());
@@ -39,14 +39,14 @@
                 if(servicesState.services === null) {
                     return m("div", {class: "serviceEntries"}, "Searching")
                 } else {
-                    var args = ["div", {class: "serviceResults"}];
-                    args = args.concat(servicesState.services.map(x => m(ServiceEntry, x)));
+                    const args = ["div", {class: "serviceResults"}]
+                        .concat(servicesState.services.map(x => m(ServiceEntry, x)));
                     return m.apply(this, args);
                 }
             }
         }
 
-        var ServiceView = {
+        const ServiceView = {
             view: function(vnode) {
                 return m("div", {class: "serviceView"},
                     m("p", "Services"),
@@ -54,9 +54,9 @@
             }
         }
 
-        var ResultEntry = {
+        const ResultEntry = {
             view: function(vnode) {
-                var testResult = null;
+                let testResult = null;
                 if(vnode.attrs.Failed === 0 && vnode.attrs.Errored === 0) {
                     testResult = m("div", {class: "result resultPassed"}, "☑");
                 } else {
@@ -68,15 +68,15 @@
             }
         }
 
-        var ResultDayColumn = {
+        const ResultDayColumn = {
             view: function(vnode) {
-                var args = ["div", {class: "resultDayColumn"}, m("div", {class: "resultDayColumnDate"}, vnode.attrs.date)];
-                    args = args.concat(vnode.attrs.entries.map(x => m(ResultEntry, x)));
-                    return m.apply(this, args);
+                const args = ["div", {class: "resultDayColumn"}, m("div", {class: "resultDayColumnDate"}, vnode.attrs.date)]
+                    .concat(vnode.attrs.entries.map(x => m(ResultEntry, x)));
+                return m.apply(this, args);
             }
         }
 
-        var resultsState = {
+        let resultsState = {
             results: null
         }
 
@@ -91,14 +91,14 @@
             });
         }
 
-        var groupBy = function(xs, key) {
+        const groupBy = function(xs, key) {
             return xs.reduce(function(rv, x) {
                 (rv[x[key]] = rv[x[key]] || []).push(x);
                 return rv;
             }, {});
         };
 
-        var ResultEntries = {
+        const ResultEntries = {
             oninit: function(vnode) {
                 fetchServiceResults(vnode.attrs.name)
                 .then(_ => m.redraw());
@@ -107,25 +107,24 @@
                 if(resultsState.results === null) {
                     return m("div", {class: "resultEntries"}, "Searching")
                 } else {
-                    let date = new Date();
+                    const date = new Date();
 
                     resultsState.results.forEach((x) => {
-                        var batchedDate = new Date(x.CreatedAt);
+                        const batchedDate = new Date(x.CreatedAt);
                         batchedDate.setMilliseconds(~~(batchedDate.getMilliseconds()/100))
                         x.CreatedAtBatched = `${batchedDate.getHours()}${batchedDate.getSeconds()}${batchedDate.getMilliseconds()}`;
                     });
-                    var dayGroups = groupBy(resultsState.results, "CreatedAtBatched");
-                    console.log(dayGroups);
+                    const dayGroups = groupBy(resultsState.results, "CreatedAtBatched");
 
-                    var args = ["div", {class: "resultEntries"}];
-                    args = args.concat(Object.keys(dayGroups).map(x => m(ResultDayColumn, {date: x, entries: dayGroups[x]})));
+                    const args = ["div", {class: "resultEntries"}]
+                        .concat(Object.keys(dayGroups).map(x => m(ResultDayColumn, {date: x, entries: dayGroups[x]})));
                     return m.apply(this, args);
                 }
                 return m.apply(this, args)
             }
         }
 
-        var ResultsView = {
+        const ResultsView = {
             view: function(vnode) {
                 return m("div", {class: "resultsView"},
                     m("p", "Service - " + m.route.param("name")),
