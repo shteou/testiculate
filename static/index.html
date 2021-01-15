@@ -54,10 +54,14 @@
             }
         }
 
+        const isPassed = function(testResult) {
+            return testResult.Failed === 0 && testResult.Errored === 0;
+        }
+
         const ResultEntry = {
             view: function(vnode) {
                 let testResult = null;
-                if(vnode.attrs.Failed === 0 && vnode.attrs.Errored === 0) {
+                if(isPassed(vnode.attrs)) {
                     testResult = m("div", {class: "result resultPassed"}, "☑");
                 } else {
                     testResult = m("div", {class: "result resultFailed"}, "☒");
