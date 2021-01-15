@@ -102,6 +102,29 @@
             }, {});
         };
 
+        const totalPassed = function(results) {
+            return results.filter(isPassed).length;
+        }
+
+        const totalFailed = function(results) {
+            return results.filter((x) => !isPassed(x)).length;
+        }
+
+        const passRate = function(results) {
+            return ~~((results.filter(isPassed).length / results.length)*100);
+        }
+
+        const ResultMetrics = {
+            view: function(vnode) {
+                const results = vnode.attrs.results;
+                return m("div", {class: "resultMetrics"},
+                    m("p", "Builds: " + results.length),
+                    m("p", "Passed: " + totalPassed(results)),
+                    m("p", "Failed: " + totalFailed(results)),
+                    m("p", "Passrate: " + passRate(results) + "%"));
+            }
+        }
+
         const ResultEntries = {
             oninit: function(vnode) {
                 fetchServiceResults(vnode.attrs.name)
@@ -120,7 +143,7 @@
                     });
                     const dayGroups = groupBy(resultsState.results, "CreatedAtBatched");
 
-                    const args = ["div", {class: "resultEntries"}]
+                    const args = ["div", {class: "resultEntries"}, m(ResultMetrics, {results: resultsState.results})]
                         .concat(Object.keys(dayGroups).map(x => m(ResultDayColumn, {date: x, entries: dayGroups[x]})));
                     return m.apply(this, args);
                 }
