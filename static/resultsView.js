@@ -1,8 +1,47 @@
+// State
 
+let resultsState = {
+    results: null
+}
+
+// Service
+
+const fetchServiceResults = function(service) {
+    return fetch('http://localhost:8080/tests/' + service)
+    .then(response => response.json())
+    .then(data => {
+        resultsState.results = data;
+    }).catch(function (err) {
+        console.warn('Something went wrong.', err);
+    });
+}
+
+// Helplers
 
 const isPassed = function(testResult) {
     return testResult.Failed === 0 && testResult.Errored === 0;
 }
+
+const groupBy = function(xs, key) {
+    return xs.reduce(function(rv, x) {
+        (rv[x[key]] = rv[x[key]] || []).push(x);
+        return rv;
+    }, {});
+};
+
+const totalPassed = function(results) {
+    return results.filter(isPassed).length;
+}
+
+const totalFailed = function(results) {
+    return results.filter((x) => !isPassed(x)).length;
+}
+
+const passRate = function(results) {
+    return ~~((results.filter(isPassed).length / results.length)*100);
+}
+
+// Components
 
 const ResultEntry = {
     view: function(vnode) {
@@ -24,40 +63,6 @@ const ResultDayColumn = {
             .concat(vnode.attrs.entries.map(x => m(ResultEntry, x)));
         return m.apply(this, args);
     }
-}
-
-let resultsState = {
-    results: null
-}
-
-function fetchServiceResults(service) {
-    return fetch('http://localhost:8080/tests/' + service)
-    .then(response => response.json())
-    .then(data => {
-        resultsState.results = data;
-        m.redraw();
-    }).catch(function (err) {
-        console.warn('Something went wrong.', err);
-    });
-}
-
-const groupBy = function(xs, key) {
-    return xs.reduce(function(rv, x) {
-        (rv[x[key]] = rv[x[key]] || []).push(x);
-        return rv;
-    }, {});
-};
-
-const totalPassed = function(results) {
-    return results.filter(isPassed).length;
-}
-
-const totalFailed = function(results) {
-    return results.filter((x) => !isPassed(x)).length;
-}
-
-const passRate = function(results) {
-    return ~~((results.filter(isPassed).length / results.length)*100);
 }
 
 const ResultMetrics = {
@@ -93,14 +98,15 @@ const ResultEntries = {
                 .concat(Object.keys(dayGroups).map(x => m(ResultDayColumn, {date: x, entries: dayGroups[x]})));
             return m.apply(this, args);
         }
-        return m.apply(this, args)
     }
 }
 
 const ResultsView = {
     view: function(vnode) {
+        const serviceName = m.route.param("name");
+
         return m("div", {class: "resultsView"},
-            m("p", "Service - " + m.route.param("name")),
-            m(ResultEntries, {name: m.route.param("name")}));
+            m("p", "Service - " + serviceName),
+            m(ResultEntries, {name: serviceName}));
     }
 }
