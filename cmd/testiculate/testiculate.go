@@ -26,6 +26,7 @@ func main() {
 
 	db.AutoMigrate(&models.Service{})
 	db.AutoMigrate(&models.Result{})
+	db.AutoMigrate(&models.TestExecution{})
 
 	context := controllers.Context{DB: db}
 
@@ -37,6 +38,8 @@ func main() {
 	r := mux.NewRouter()
 	r.Handle("/status", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(controllers.StatusHandler)))
 	r.Handle("/services", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.ServicesGetHandler)))
+	r.Handle("/executions/{service}", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.ExecutionServiceGetHandler))).
+		Methods("GET")
 	r.Handle("/tests/{service}", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.TestServiceGetHandler))).
 		Methods("GET")
 	r.Handle("/tests/{service}/{pr}", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.TestPrGetHandler))).

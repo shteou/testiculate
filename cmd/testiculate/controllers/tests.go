@@ -204,5 +204,19 @@ func (c *Context) TestsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	testcases := []models.TestExecution{}
+
+	for i := 0; i < len(suites[0].Tests); i++ {
+		test := suites[0].Tests[i]
+		testcases = append(testcases, models.TestExecution{Service: service, Status: string(test.Status), PR: prNum, Build: buildNum, Name: test.Name, Classname: test.Classname})
+	}
+
+	res = c.DB.CreateInBatches(testcases, 100)
+	if res.Error != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to write test execution record"})
+		return
+	}
+
 	json.NewEncoder(w).Encode(map[string]string{"stored": strconv.Itoa(len(suites))})
 }
