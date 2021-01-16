@@ -9,24 +9,26 @@ body {
     background-color: lightgrey;
     margin: 0.2em;
     min-width: 80%;
+    min-height: 90vh;
 }
 
 .resultsView {
     background-color: lightgrey;
     margin: 0.2em;
     min-width: 80%;
+    min-height: 90vh;
 }
 
 /* serviceView components */
 
 .serviceEntry {
-    background-color: cadetblue;
+    padding: 0.5em;
+    padding-left: 1em;
 }
 
 /* resultsView components */
 
 .resultEntries {
-    min-height: 90vh;
     display: flex;
 }
 
