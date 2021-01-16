@@ -24,17 +24,34 @@ func main() {
 		log.Fatal("Unable ")
 	}
 
+	autoMigrate(db)
+
+	log.Println("Listening on port 8080...")
+	router := makeRouter(&controllers.Context{DB: db})
+	http.Handle("/", router)
+	srv := &http.Server{
+		Handler:      corsHeaders().Handler(router),
+		Addr:         "0.0.0.0:8080",
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+	log.Fatal(srv.ListenAndServe())
+}
+
+func autoMigrate(db *gorm.DB) {
 	db.AutoMigrate(&models.Service{})
 	db.AutoMigrate(&models.Result{})
 	db.AutoMigrate(&models.TestExecution{})
+}
 
-	context := controllers.Context{DB: db}
-
-	c := cors.New(cors.Options{
+func corsHeaders() *cors.Cors {
+	return cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
 		AllowedMethods: []string{"GET"},
 	})
+}
 
+func makeRouter(context *controllers.Context) *mux.Router {
 	r := mux.NewRouter()
 	r.Handle("/status", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(controllers.StatusHandler)))
 	r.Handle("/services", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.ServicesGetHandler)))
@@ -52,14 +69,6 @@ func main() {
 	r.PathPrefix("/").Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./static/index.html")
 	}))
-	http.Handle("/", r)
 
-	log.Println("Listening on port 8080...")
-	srv := &http.Server{
-		Handler:      c.Handler(r),
-		Addr:         "0.0.0.0:8080",
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
-	}
-	log.Fatal(srv.ListenAndServe())
+	return r
 }
