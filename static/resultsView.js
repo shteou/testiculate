@@ -103,7 +103,7 @@ const ResultEntries = function () {
 const FlakeEntry = {
     view: function(vnode) {
         return m("div", {class: "flakeEntry"},
-            m("p", vnode.attrs.name + ": " + vnode.attrs.passed + " " + vnode.attrs.failed));
+            m("p", vnode.attrs.name + " | " + vnode.attrs.passRate + "%"));
     }
 }
 
@@ -119,11 +119,11 @@ const FlakeEntries = function() {
     }
 
     const analyseFlakeyTests = function(testExecutions) {
-        let uniqueCases = testExecutions.map((te) => te.Classname + te.Name)
+        let uniqueCases = testExecutions.map((te) => te.Classname + ":" + te.Name)
             .filter((value, index, self) => self.indexOf(value) === index);
         
         let passFailRate = uniqueCases.map((te) => {
-            theseExecutions = testExecutions.filter((x) => (x.Classname + x.Name) === te);
+            theseExecutions = testExecutions.filter((x) => (x.Classname + ":" + x.Name) === te);
             const passed = theseExecutions.filter((x) => x.Status === "passed").length;
             const failed = theseExecutions.filter((x) => x.Status === "failed" || x.Status === "errored").length;
             return {
@@ -147,10 +147,10 @@ const FlakeEntries = function() {
         },
         view: function (vnode) {
             if (passFailRate === null) {
-                return m("div", "Flakey tests",
+                return m("div", "",
                     m("p", "Analysing"));
             } else {
-                let args = ["div", "Flakey tests"];
+                let args = ["div", "Test Case | Pass Rate %"];
                 args = args.concat(passFailRate.map((pfr) => m(FlakeEntry, pfr)));
 
                 return m.apply(this, args);
