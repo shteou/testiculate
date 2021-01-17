@@ -6,7 +6,7 @@ const ServiceEntry = {
 }
 
 const ServiceResults = function() {
-    let servicesState = null;
+    let services = null;
 
     const fetchServices = function() {
         return fetch('http://localhost:8080/services')
@@ -19,20 +19,20 @@ const ServiceResults = function() {
     return {
         oninit: function() {
             fetchServices()
-            .then(data => servicesState = data)
+            .then(data => services = data)
             .then(_ => m.redraw());
         },
         view: function(vnode) {
-            if(servicesState === null) {
+            if(services === null) {
                 return m("div", {class: "serviceEntries"}, "Searching")
             } else {
                 const args = ["div", {class: "serviceResults"}]
-                    .concat(servicesState.map(x => m(ServiceEntry, x)));
+                    .concat(services.map(x => m(ServiceEntry, x)));
                 return m.apply(this, args);
             }
         },
         onbeforeremove: function(vnode) {
-            servicesState = null;
+            services = null;
         }
     }
     

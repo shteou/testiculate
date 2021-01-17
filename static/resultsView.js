@@ -108,7 +108,7 @@ const FlakeEntry = {
 }
 
 const FlakeEntries = function() {
-    let passFailRate = null;
+    let passFailRates = null;
 
     const fetchServiceExecutions = function (service) {
         return fetch('http://localhost:8080/executions/' + service)
@@ -122,7 +122,7 @@ const FlakeEntries = function() {
         let uniqueCases = testExecutions.map((te) => te.Classname + ":" + te.Name)
             .filter((value, index, self) => self.indexOf(value) === index);
         
-        let passFailRate = uniqueCases.map((te) => {
+        let flakyPassFailRates = uniqueCases.map((te) => {
             theseExecutions = testExecutions.filter((x) => (x.Classname + ":" + x.Name) === te);
             const passed = theseExecutions.filter((x) => x.Status === "passed").length;
             const failed = theseExecutions.filter((x) => x.Status === "failed" || x.Status === "errored").length;
@@ -135,29 +135,29 @@ const FlakeEntries = function() {
         }).filter(pfr => pfr.passRate !== 100.0)
         .sort(((a, b) => a.passRate - b.passRate));
         
-        return passFailRate;
+        return flakyPassFailRates;
     }
 
     return {
         oninit: function (vnode) {
             fetchServiceExecutions(vnode.attrs.name)
                 .then(analyseFlakeyTests)
-                .then((x) => passFailRate = x)
+                .then((x) => passFailRates = x)
                 .then(_ => m.redraw());
         },
         view: function (vnode) {
-            if (passFailRate === null) {
+            if (passFailRates === null) {
                 return m("div", "",
                     m("p", "Analysing"));
             } else {
                 let args = ["div", "Test Case | Pass Rate %"];
-                args = args.concat(passFailRate.map((pfr) => m(FlakeEntry, pfr)));
+                args = args.concat(passFailRates.map((pfr) => m(FlakeEntry, pfr)));
 
                 return m.apply(this, args);
             }
         },
         onbeforeremove: function(vnode) {
-            passFailRate = null;
+            passFailRates = null;
         }
     }
 }
