@@ -1,18 +1,3 @@
-let servicesState = {
-    services: null
-}
-
-function fetchServices() {
-    return fetch('http://localhost:8080/services')
-    .then(response => response.json())
-    .then(data => {
-        servicesState.services = data;
-        m.redraw();
-    }).catch(function (err) {
-        console.warn('Something went wrong.', err);
-    });
-}
-
 const ServiceEntry = {
     view: function(vnode) {
         return m("div", {class: "serviceEntry"}, 
@@ -20,26 +5,47 @@ const ServiceEntry = {
     }
 }
 
-const ServiceResults = {
-    oninit: function() {
-        fetchServices()
-        .then(_ => m.redraw());
-    },
-    view: function(vnode) {
-        if(servicesState.services === null) {
-            return m("div", {class: "serviceEntries"}, "Searching")
-        } else {
-            const args = ["div", {class: "serviceResults"}]
-                .concat(servicesState.services.map(x => m(ServiceEntry, x)));
-            return m.apply(this, args);
+const ServiceResults = function() {
+    let servicesState = null;
+
+    const fetchServices = function() {
+        return fetch('http://localhost:8080/services')
+        .then(response => response.json())
+        .catch(function (err) {
+            console.warn('Something went wrong.', err);
+        });
+    }
+
+    return {
+        oninit: function() {
+            fetchServices()
+            .then(data => servicesState = data)
+            .then(_ => m.redraw());
+        },
+        view: function(vnode) {
+            if(servicesState === null) {
+                return m("div", {class: "serviceEntries"}, "Searching")
+            } else {
+                const args = ["div", {class: "serviceResults"}]
+                    .concat(servicesState.map(x => m(ServiceEntry, x)));
+                return m.apply(this, args);
+            }
+        },
+        onbeforeremove: function(vnode) {
+            servicesState = null;
         }
     }
+    
 }
 
-const ServiceView = {
-    view: function(vnode) {
-        return m("div", {class: "serviceView"},
-            m("p", "Services"),
-            m(ServiceResults));
+
+const ServiceView = function() {
+
+    return {
+        view: function(vnode) {
+            return m("div", {class: "serviceView"},
+                m("p", "Services"),
+                m(ServiceResults));
+        }    
     }
 }
