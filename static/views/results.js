@@ -166,7 +166,7 @@ const ResultsView = {
         const serviceName = m.route.param("name");
 
         return m("div", { class: "resultsView" },
-            m("p", "Service - " + serviceName),
+            m(Breadcrumb, {breadcrumbs: ["Service", serviceName, "Executions"]}),
             m(ResultEntries, { name: serviceName }),
             m(FlakeEntries, { name: serviceName }));
     }

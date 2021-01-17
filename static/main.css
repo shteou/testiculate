@@ -4,6 +4,15 @@ body {
   padding: 1em;
 }
 
+.breadcrumb {
+    margin: 0.5em;
+    padding-bottom: 0.75em;
+}
+
+.breadcrumb > span {
+    padding-left: 0.5em;
+}
+
 /* PageViews */
 .serviceView {
     background-color: lightgrey;
@@ -35,6 +44,10 @@ body {
 .resultEntry {
     margin: 0px;
     margin-left: 1em;
+}
+
+.resultMetrics {
+    padding: 5px;
 }
 
 .resultDayColumnDate {
