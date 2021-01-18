@@ -30,7 +30,7 @@ func main() {
 	router := makeRouter(&controllers.Context{DB: db})
 	http.Handle("/", router)
 	srv := &http.Server{
-		Handler:      corsHeaders().Handler(router),
+		Handler:      handlers.CompressHandler(corsHeaders().Handler(router)),
 		Addr:         "0.0.0.0:8080",
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
