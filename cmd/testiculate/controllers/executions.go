@@ -2,13 +2,11 @@ package controllers
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/shteou/testiculate/cmd/testiculate/models"
-	"gorm.io/gorm"
 )
 
 func (c *Context) ExecutionServiceGetHandler(w http.ResponseWriter, r *http.Request) {
@@ -24,25 +22,16 @@ func (c *Context) ExecutionServiceGetHandler(w http.ResponseWriter, r *http.Requ
 	service := models.Service{Name: serviceName}
 	res := c.DB.Where(&service).First(&service)
 
-	if res.Error != nil {
-		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
-			w.WriteHeader(http.StatusNotFound)
-		} else {
-			errorResponse(w, r, res.Error)
-		}
+	if handleDatabaseQueryError(res, w, r) {
 		return
 	}
 
 	var results []models.TestExecution
 	lastMonth := time.Now().Add(-time.Hour * 24 * 30)
-	tx := c.DB.Where("service_id = ? AND created_at >= ?", service.ID, lastMonth).Find(&results)
-	if tx.Error != nil {
-		if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
-			w.WriteHeader(http.StatusNotFound)
-		} else {
-			errorResponse(w, r, tx.Error)
-		}
+	res = c.DB.Where("service_id = ? AND created_at >= ?", service.ID, lastMonth).Find(&results)
+	if handleDatabaseQueryError(res, w, r) {
 		return
 	}
+
 	json.NewEncoder(w).Encode(results)
 }

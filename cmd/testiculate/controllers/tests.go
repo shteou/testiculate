@@ -2,14 +2,12 @@ package controllers
 
 import (
 	"encoding/json"
-	"errors"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/shteou/testiculate/cmd/testiculate/models"
-	"gorm.io/gorm"
 
 	"github.com/joshdk/go-junit"
 )
@@ -31,23 +29,13 @@ func (c *Context) TestServiceGetHandler(w http.ResponseWriter, r *http.Request) 
 	service := models.Service{Name: serviceName}
 	res := c.DB.Where(&service).First(&service)
 
-	if res.Error != nil {
-		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
-			w.WriteHeader(http.StatusNotFound)
-		} else {
-			errorResponse(w, r, res.Error)
-		}
+	if handleDatabaseQueryError(res, w, r) {
 		return
 	}
 
 	var results []models.Result
-	tx := c.DB.Where(&models.Result{ServiceID: service.ID}).Find(&results)
-	if tx.Error != nil {
-		if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
-			w.WriteHeader(http.StatusNotFound)
-		} else {
-			errorResponse(w, r, tx.Error)
-		}
+	res = c.DB.Where(&models.Result{ServiceID: service.ID}).Find(&results)
+	if handleDatabaseQueryError(res, w, r) {
 		return
 	}
 	json.NewEncoder(w).Encode(results)
@@ -80,25 +68,16 @@ func (c *Context) TestBuildGetHandler(w http.ResponseWriter, r *http.Request) {
 	service := models.Service{Name: serviceName}
 	res := c.DB.Where(&service).First(&service)
 
-	if res.Error != nil {
-		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
-			w.WriteHeader(http.StatusNotFound)
-		} else {
-			errorResponse(w, r, res.Error)
-		}
+	if handleDatabaseQueryError(res, w, r) {
 		return
 	}
 
 	var results []models.Result
-	tx := c.DB.Where(&models.Result{PR: prNum, Build: buildNum, Service: service}).First(&results)
-	if tx.Error != nil {
-		if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
-			w.WriteHeader(http.StatusNotFound)
-		} else {
-			errorResponse(w, r, tx.Error)
-		}
+	res = c.DB.Where(&models.Result{PR: prNum, Build: buildNum, Service: service}).First(&results)
+	if handleDatabaseQueryError(res, w, r) {
 		return
 	}
+
 	json.NewEncoder(w).Encode(results)
 }
 
@@ -122,25 +101,16 @@ func (c *Context) TestPrGetHandler(w http.ResponseWriter, r *http.Request) {
 	service := models.Service{Name: serviceName}
 	res := c.DB.Where(&service).First(&service)
 
-	if res.Error != nil {
-		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
-			w.WriteHeader(http.StatusNotFound)
-		} else {
-			errorResponse(w, r, res.Error)
-		}
+	if handleDatabaseQueryError(res, w, r) {
 		return
 	}
 
 	var results []models.Result
-	tx := c.DB.Where(&models.Result{PR: prNum, Service: service}).Find(&results)
-	if tx.Error != nil {
-		if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
-			w.WriteHeader(http.StatusNotFound)
-		} else {
-			errorResponse(w, r, tx.Error)
-		}
+	res = c.DB.Where(&models.Result{PR: prNum, Service: service}).Find(&results)
+	if handleDatabaseQueryError(res, w, r) {
 		return
 	}
+
 	json.NewEncoder(w).Encode(results)
 }
 
@@ -187,9 +157,7 @@ func (c *Context) TestsHandler(w http.ResponseWriter, r *http.Request) {
 	suiteTotals := suites[0].Totals
 	service := models.Service{Name: serviceName}
 	res := c.DB.FirstOrCreate(&service, &service)
-	if res.Error != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to write service record"})
+	if handleDatabaseCreateError(res, w, r, "service") {
 		return
 	}
 
@@ -198,9 +166,7 @@ func (c *Context) TestsHandler(w http.ResponseWriter, r *http.Request) {
 		Service: service, PR: prNum, Build: buildNum}
 
 	res = c.DB.Create(&result)
-	if res.Error != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to write result record"})
+	if handleDatabaseCreateError(res, w, r, "result") {
 		return
 	}
 
@@ -212,9 +178,7 @@ func (c *Context) TestsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res = c.DB.CreateInBatches(testcases, 100)
-	if res.Error != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to write test execution record"})
+	if handleDatabaseCreateError(res, w, r, "test execution") {
 		return
 	}
 
