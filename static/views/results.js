@@ -147,10 +147,10 @@ const FlakeEntries = function() {
         },
         view: function (vnode) {
             if (passFailRates === null) {
-                return m("div", "",
+                return m("div", {class: "flakeEntries"},
                     m("p", "Analysing"));
             } else {
-                let args = ["div", "Test Case | Pass Rate %"];
+                let args = ["div", {class: "flakeEntries"}, "Test Case | Pass Rate %"];
                 args = args.concat(passFailRates.map((pfr) => m(FlakeEntry, pfr)));
 
                 return m.apply(this, args);

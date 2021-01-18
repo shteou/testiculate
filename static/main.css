@@ -4,25 +4,35 @@ body {
   padding: 1em;
 }
 
+div {
+    display: flex;
+    flex-direction: column;
+}
+
 .breadcrumb {
     margin: 0.5em;
-    padding-bottom: 0.75em;
+    padding-bottom: 1.0em;
+    border-bottom: 1px solid darkorange;
+    flex-direction: row;
+}
+
+.breadcrumb ion-icon {
+    font-size: 1.5em;
 }
 
 .breadcrumb > span {
+    font-size: 1.5em;
     padding-left: 0.5em;
 }
 
 /* PageViews */
 .serviceView {
-    background-color: lightgrey;
     margin: 0.2em;
     min-width: 80%;
     min-height: 90vh;
 }
 
 .resultsView {
-    background-color: lightgrey;
     margin: 0.2em;
     min-width: 80%;
     min-height: 90vh;
@@ -33,12 +43,15 @@ body {
 .serviceEntry {
     padding: 0.5em;
     padding-left: 1em;
+    max-width: 15vh;
 }
 
 /* resultsView components */
 
 .resultEntries {
-    display: flex;
+    flex-direction: row;
+    margin-left: 1em;
+    margin-top: 5px;
 }
 
 .resultEntry {
@@ -50,8 +63,21 @@ body {
     padding: 5px;
 }
 
+.resultMetrics p {
+    margin: 5px;
+}
+
+.flakeEntries {
+    margin-left: 1em;
+}
+
+.flakeEntries p {
+    margin: 5px;
+}
+
 .resultDayColumnDate {
-    margin-left: 9px;
+    margin-left: 1em;
+    margin-bottom: 0.75em;
     transform: rotate(-40deg);
 }
 
