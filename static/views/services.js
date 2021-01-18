@@ -44,7 +44,9 @@ const ServiceView = function() {
     return {
         view: function(vnode) {
             return m("div", {class: "serviceView"},
-                m(Breadcrumb, {breadcrumbs: ["Services"]}),
+                m(Breadcrumb, {
+                    breadcrumbs: [m("span", "Services")],
+                    futurecrumbs: []}),
                 m(ServiceResults));
         }    
     }
