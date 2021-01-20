@@ -9,6 +9,8 @@ import (
 	"github.com/shteou/testiculate/cmd/testiculate/models"
 )
 
+// ExecutionServiceGetHandler fetches the last 30 days of individual test executions
+//   Request -> Response<[]Execution>
 func (c *Context) ExecutionServiceGetHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 

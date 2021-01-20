@@ -9,6 +9,9 @@ import (
 	"gorm.io/gorm"
 )
 
+// ServicesGetHandler returns a list of all service definitions. The service names are
+// used as natural keys for most other endpoints
+//   Request -> Response<[]Service>
 func (c *Context) ServicesGetHandler(w http.ResponseWriter, r *http.Request) {
 	var services []models.Service
 	res := c.DB.Find(&services)

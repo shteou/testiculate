@@ -4,6 +4,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// Result an aggregate result, mapping to the ingested JUnit test suite(s)
 type Result struct {
 	gorm.Model
 	Service   Service `json:"-"`
