@@ -7,13 +7,15 @@
         <script src="http://localhost:8080/static/components/breadcrumb.js"></script>
         <script src="http://localhost:8080/static/views/results.js"></script>
         <script src="http://localhost:8080/static/views/services.js"></script>
+        <script src="http://localhost:8080/static/views/tests.js"></script>
         <link rel="stylesheet" href="http://localhost:8080/static/main.css">
   </head>
   <body>
     <script>
         m.route(document.body, "/" + window.location.pathname, {
             "/": ServiceView,
-            "/results/:serviceid": ResultsView
+            "/results": ResultsView,
+            "/tests": TestsView
         });
     </script>
     <script type="module" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"></script>

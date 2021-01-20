@@ -167,8 +167,8 @@ const ResultsView = {
 
         return m("div", { class: "resultsView" },
             m(Breadcrumb, {
-                breadcrumbs: [m("span", "Service"), m("span", serviceName), m("span", "Executions")],
-                futurecrumbs: []}),
+                breadcrumbs: [m("span", {onclick: () => m.route.set("/")}, "Services"), m("span", serviceName), m("span", "Results")],
+                futurecrumbs: [m("span", {onclick: () => m.route.set("/tests", {name: serviceName})}, "Tests")]}),
             m(ResultEntries, { name: serviceName }),
             m(FlakeEntries, { name: serviceName }));
     }

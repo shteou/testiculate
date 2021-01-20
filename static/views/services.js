@@ -1,7 +1,7 @@
 const ServiceEntry = {
     view: function(vnode) {
         return m("div", {class: "serviceEntry"}, 
-            m("button", {onclick: () => m.route.set("/results/" + vnode.attrs.ID, {name: vnode.attrs.Name})}, vnode.attrs.Name));
+            m("button", {onclick: () => m.route.set("/results", {name: vnode.attrs.Name})}, vnode.attrs.Name));
     }
 }
 

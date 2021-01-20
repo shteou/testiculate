@@ -92,3 +92,17 @@ div {
 .resultFailed {
     color: crimson;
 }
+
+/* testsView components */
+
+.testDetail {
+    margin: 0.5em;
+}
+
+.testDetailName {
+    flex-direction: row;
+}
+
+testDetailStatuses {
+    flex-direction: column;
+}
