@@ -13,6 +13,10 @@ RUN go build -ldflags="-w -s" cmd/testiculate/testiculate.go
 
 FROM busybox:glibc as production
 
+WORKDIR /testiculate
+
 COPY --from=builder /go/src/github.com/ccycloud/testiculate/testiculate /usr/bin/testiculate
+COPY --from=builder /lib/x86_64-linux-gnu/libdl.so.2 /lib/libdl.so.2
+COPY static/ /testiculate/static
 
 CMD ["testiculate"]
