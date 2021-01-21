@@ -125,9 +125,9 @@ const FlakeEntries = function() {
             .filter((value, index, self) => self.indexOf(value) === index);
         
         let flakyPassFailRates = uniqueCases.map((te) => {
-            theseExecutions = testExecutions.filter((x) => (x.Classname + ":" + x.Name) === te);
-            const passed = theseExecutions.filter((x) => x.Status === "passed").length;
-            const failed = theseExecutions.filter((x) => x.Status === "failed" || x.Status === "errored").length;
+            const testCaseExecutions = testExecutions.filter((x) => (x.Classname + ":" + x.Name) === te);
+            const passed = testCaseExecutions.filter((x) => x.Status === "passed").length;
+            const failed = testCaseExecutions.filter((x) => x.Status === "failed" || x.Status === "errored").length;
             return {
                 "passed": passed,
                 "failed": failed,
