@@ -1,3 +1,5 @@
+import Breadcrumb from '../components/breadcrumb.js';
+
 const TestDetail = {
     view: function(vnode) {
         return m("div", {class: "testDetail"},
@@ -68,7 +70,7 @@ const TestsDetails = function() {
     }
 }
 
-const TestsView = function() {
+export default function() {
     const serviceName = m.route.param("name");
 
     return {

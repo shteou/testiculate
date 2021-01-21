@@ -1,3 +1,5 @@
+import Breadcrumb from '../components/breadcrumb.js';
+
 // Helplers
 
 const isPassed = function (testResult) {
@@ -161,7 +163,8 @@ const FlakeEntries = function() {
         }
     }
 }
-const ResultsView = {
+
+export default {
     view: function (vnode) {
         const serviceName = m.route.param("name");
 

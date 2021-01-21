@@ -4,21 +4,22 @@
     <meta charset="utf-8">
     <title>Testiculate</title>
         <script src="https://unpkg.com/mithril/mithril.js"></script>
-        <script src="http://localhost:8080/static/components/breadcrumb.js"></script>
-        <script src="http://localhost:8080/static/views/results.js"></script>
-        <script src="http://localhost:8080/static/views/services.js"></script>
-        <script src="http://localhost:8080/static/views/tests.js"></script>
         <link rel="stylesheet" href="http://localhost:8080/static/main.css">
   </head>
   <body>
-    <script>
+    <script type="module" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule="" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"></script>
+
+    <script type="module">
+        import ResultsView from './static/js/views/results.js';
+        import ServicesView from './static/js/views/services.js';
+        import TestsView from './static/js/views/tests.js';
+
         m.route(document.body, "/" + window.location.pathname, {
-            "/": ServiceView,
+            "/": ServicesView,
             "/results": ResultsView,
             "/tests": TestsView
         });
     </script>
-    <script type="module" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule="" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"></script>
 </body>
 </html>

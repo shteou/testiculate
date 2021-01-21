@@ -51,6 +51,13 @@ func corsHeaders() *cors.Cors {
 	})
 }
 
+func setHeader(header, value string, handle http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		w.Header().Set(header, value)
+		handle.ServeHTTP(w, req)
+	})
+}
+
 func makeRouter(context *controllers.Context) *mux.Router {
 	r := mux.NewRouter()
 	r.Handle("/status", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(controllers.StatusHandler)))
@@ -65,6 +72,8 @@ func makeRouter(context *controllers.Context) *mux.Router {
 		Methods("GET")
 	r.Handle("/tests/{service}/{pr}/{build}", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.TestsHandler))).
 		Methods("PUT")
+	r.PathPrefix("/static/js/").Handler(
+		http.StripPrefix("/static/js/", setHeader("Content-Type", "application/javascript", http.FileServer(http.Dir("./static/js/")))))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 	r.PathPrefix("/").Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./static/index.html")

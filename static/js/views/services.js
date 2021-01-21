@@ -1,3 +1,5 @@
+import Breadcrumb from '../components/breadcrumb.js';
+
 const ServiceEntry = {
     view: function(vnode) {
         return m("div", {class: "serviceEntry"}, 
@@ -39,7 +41,7 @@ const ServiceResults = function() {
 }
 
 
-const ServiceView = function() {
+export default function() {
 
     return {
         view: function(vnode) {

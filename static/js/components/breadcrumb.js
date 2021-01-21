@@ -6,7 +6,7 @@ const joinArray = function(arr, separator) {
             : value);
 }
 
-const Breadcrumb = {
+export default {
     view: function(vnode) {
         let breadcrumbs = joinArray(vnode.attrs.breadcrumbs, m("span", " ⇒ "));
         let futurecrumbs = joinArray(vnode.attrs.futurecrumbs, m("span", " ∨ "));
