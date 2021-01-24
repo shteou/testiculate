@@ -26,6 +26,10 @@ spec:
       {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+      - name: database
+        persistentVolumeClaim:
+          claimName: {{ include "testiculate.fullname" }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -36,6 +40,9 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
+          volumeMounts:
+            - name: database
+              mountPath: /testiculate/database
           livenessProbe:
             httpGet:
               path: /status

@@ -13,13 +13,13 @@ RUN go build -ldflags="-w -s" cmd/testiculate/testiculate.go
 
 FROM busybox:glibc as production
 
-RUN mkdir /testiculate && chown 1000:1000 /testiculate
+RUN mkdir -p /testiculate/database && chown -R 1000:1000 /testiculate
 WORKDIR /testiculate
+
+USER 1000:1000
 
 COPY --from=builder /go/src/github.com/ccycloud/testiculate/testiculate /usr/bin/testiculate
 COPY --from=builder /lib/x86_64-linux-gnu/libdl.so.2 /lib/libdl.so.2
 COPY static/ /testiculate/static
-
-USER 1000:1000
 
 CMD ["testiculate"]
