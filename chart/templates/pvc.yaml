@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ $fullName }}
+  name: {{ include "testiculate.fullname" . }}
 spec:
   accessModes:
     - ReadWriteOnce
@@ -9,5 +9,3 @@ spec:
   resources:
     requests:
       storage: 8Gi
-  storageClassName: ""
-

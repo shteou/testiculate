@@ -29,7 +29,7 @@ spec:
       volumes:
       - name: database
         persistentVolumeClaim:
-          claimName: {{ include "testiculate.fullname" }}
+          claimName: {{ include "testiculate.fullname" . }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
