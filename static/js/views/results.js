@@ -87,9 +87,10 @@ const ResultEntries = function () {
                 results.forEach((x) => {
                     const batchedDate = new Date(x.CreatedAt);
                     // The view currently displays columns per millisecond as there's no way to simulate uploading
-                    // test results aver multiple days, clamp to the nearest 100ms to generate better looking fake data
-                    batchedDate.setMilliseconds(~~(batchedDate.getMilliseconds() / 10))
-                    x.CreatedAtBatched = `${batchedDate.getHours()}${batchedDate.getSeconds()}${batchedDate.getMilliseconds()}`;
+                    // test results aver multiple days, clamp to the nearest 5 seconds to generate better looking fake data
+                    batchedDate.setMilliseconds(0)
+                    batchedDate.setSeconds(~~(batchedDate.getSeconds() / 5))
+                    x.CreatedAtBatched = `${batchedDate.getHours()}${batchedDate.getSeconds()}`;
                 });
                 const dayGroups = groupBy(results, "CreatedAtBatched");
 
