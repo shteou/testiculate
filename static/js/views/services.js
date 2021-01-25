@@ -1,4 +1,5 @@
 import Breadcrumb from '../components/breadcrumb.js';
+import {fetchServices} from '../models/services.js';
 
 const ServiceEntry = {
     view: function(vnode) {
@@ -9,14 +10,6 @@ const ServiceEntry = {
 
 const ServiceResults = function() {
     let services = null;
-
-    const fetchServices = function() {
-        return fetch('services')
-        .then(response => response.json())
-        .catch(function (err) {
-            console.warn('Something went wrong.', err);
-        });
-    }
 
     return {
         oninit: function() {
@@ -36,13 +29,10 @@ const ServiceResults = function() {
         onbeforeremove: function(vnode) {
             services = null;
         }
-    }
-    
+    }  
 }
 
-
 export default function() {
-
     return {
         view: function(vnode) {
             return m("div", {class: "serviceView"},

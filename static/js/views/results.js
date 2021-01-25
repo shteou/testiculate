@@ -1,29 +1,7 @@
 import Breadcrumb from '../components/breadcrumb.js';
-
-// Helplers
-
-const isPassed = function (testResult) {
-    return testResult.Failed === 0 && testResult.Errored === 0;
-}
-
-const groupBy = function (xs, key) {
-    return xs.reduce(function (rv, x) {
-        (rv[x[key]] = rv[x[key]] || []).push(x);
-        return rv;
-    }, {});
-};
-
-const totalPassed = function (results) {
-    return results.filter(isPassed).length;
-}
-
-const totalFailed = function (results) {
-    return results.filter((x) => !isPassed(x)).length;
-}
-
-const passRate = function (results) {
-    return ~~((results.filter(isPassed).length / results.length) * 100);
-}
+import {fetchResults} from '../models/results.js';
+import {fetchExecutions, analyseFlakeyTests, isPassed, totalPassed, totalFailed, passRate} from '../models/executions.js';
+import {groupBy} from '../util.js'
 
 // Components
 
@@ -62,20 +40,11 @@ const ResultMetrics = {
 
 const ResultEntries = function () {
     let results = null;
- 
-    const fetchServiceResults = function (service) {
-        return fetch('tests/' + service)
-            .then(response => response.json())
-            .then(data => {
-                results = data;
-            }).catch(function (err) {
-                console.warn('Something went wrong.', err);
-            });
-    }
 
     return {
         oninit: function(vnode) {
-            fetchServiceResults(vnode.attrs.name)
+            fetchResults(vnode.attrs.name)
+                .then(data => results = data)
                 .then(_ => m.redraw());
         },
         view: function(vnode) {
@@ -115,37 +84,9 @@ const FlakeEntry = {
 const FlakeEntries = function() {
     let passFailRates = null;
 
-    const fetchServiceExecutions = function (service) {
-        return fetch('executions/' + service)
-            .then(response => response.json())
-            .catch(function (err) {
-                console.warn('Something went wrong.', err);
-            });
-    }
-
-    const analyseFlakeyTests = function(testExecutions) {
-        let uniqueCases = testExecutions.map((te) => te.Classname + ":" + te.Name)
-            .filter((value, index, self) => self.indexOf(value) === index);
-        
-        let flakyPassFailRates = uniqueCases.map((te) => {
-            const testCaseExecutions = testExecutions.filter((x) => (x.Classname + ":" + x.Name) === te);
-            const passed = testCaseExecutions.filter((x) => x.Status === "passed").length;
-            const failed = testCaseExecutions.filter((x) => x.Status === "failed" || x.Status === "errored").length;
-            return {
-                "passed": passed,
-                "failed": failed,
-                passRate: ~~(100.0 * (passed / (passed + failed))),
-                name: te
-            }
-        }).filter(pfr => pfr.passRate !== 100.0)
-        .sort(((a, b) => a.passRate - b.passRate));
-        
-        return flakyPassFailRates;
-    }
-
     return {
         oninit: function (vnode) {
-            fetchServiceExecutions(vnode.attrs.name)
+            fetchExecutions(vnode.attrs.name)
                 .then(analyseFlakeyTests)
                 .then((x) => passFailRates = x)
                 .then(_ => m.redraw());
