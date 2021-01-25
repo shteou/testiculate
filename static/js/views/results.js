@@ -64,7 +64,7 @@ const ResultEntries = function () {
     let results = null;
  
     const fetchServiceResults = function (service) {
-        return fetch('http://localhost:8080/tests/' + service)
+        return fetch('tests/' + service)
             .then(response => response.json())
             .then(data => {
                 results = data;
@@ -87,9 +87,9 @@ const ResultEntries = function () {
                 results.forEach((x) => {
                     const batchedDate = new Date(x.CreatedAt);
                     // The view currently displays columns per millisecond as there's no way to simulate uploading
-                    // test results aver multiple days, clamp to the nearest 5 seconds to generate better looking fake data
+                    // test results aver multiple days, clamp to the nearest 2 seconds to generate better looking fake data
                     batchedDate.setMilliseconds(0)
-                    batchedDate.setSeconds(~~(batchedDate.getSeconds() / 5))
+                    batchedDate.setSeconds(~~(batchedDate.getSeconds() / 2))
                     x.CreatedAtBatched = `${batchedDate.getHours()}${batchedDate.getSeconds()}`;
                 });
                 const dayGroups = groupBy(results, "CreatedAtBatched");
@@ -116,7 +116,7 @@ const FlakeEntries = function() {
     let passFailRates = null;
 
     const fetchServiceExecutions = function (service) {
-        return fetch('http://localhost:8080/executions/' + service)
+        return fetch('executions/' + service)
             .then(response => response.json())
             .catch(function (err) {
                 console.warn('Something went wrong.', err);

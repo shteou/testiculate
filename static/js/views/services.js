@@ -11,7 +11,7 @@ const ServiceResults = function() {
     let services = null;
 
     const fetchServices = function() {
-        return fetch('http://localhost:8080/services')
+        return fetch('services')
         .then(response => response.json())
         .catch(function (err) {
             console.warn('Something went wrong.', err);

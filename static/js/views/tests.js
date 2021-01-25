@@ -17,7 +17,7 @@ const TestsDetails = function() {
     let executions = null;
 
     const fetchServiceExecutions = function (service) {
-        return fetch('http://localhost:8080/executions/' + serviceName)
+        return fetch('executions/' + serviceName)
             .then(response => response.json())
             .catch(function (err) {
                 console.warn('Something went wrong.', err);
