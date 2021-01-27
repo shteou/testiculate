@@ -60,17 +60,17 @@ func setHeader(header, value string, handle http.Handler) http.Handler {
 
 func makeRouter(context *controllers.Context) *mux.Router {
 	r := mux.NewRouter()
-	r.Handle("/status", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(controllers.StatusHandler)))
-	r.Handle("/services", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.ServicesGetHandler)))
-	r.Handle("/executions/{service}", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.ExecutionServiceGetHandler))).
+	r.Handle("/status", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(controllers.GetStatus)))
+	r.Handle("/services", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.GetServices)))
+	r.Handle("/executions/{service}", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.GetExecutionsByService))).
 		Methods("GET")
-	r.Handle("/tests/{service}", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.TestServiceGetHandler))).
+	r.Handle("/tests/{service}", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.GetResultsByService))).
 		Methods("GET")
-	r.Handle("/tests/{service}/{pr}", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.TestPrGetHandler))).
+	r.Handle("/tests/{service}/{pr}", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.GetResultsByServicePr))).
 		Methods("GET")
-	r.Handle("/tests/{service}/{pr}/{build}", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.TestBuildGetHandler))).
+	r.Handle("/tests/{service}/{pr}/{build}", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.GetResultsByServicePrBuid))).
 		Methods("GET")
-	r.Handle("/tests/{service}/{pr}/{build}", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.TestsHandler))).
+	r.Handle("/tests/{service}/{pr}/{build}", handlers.LoggingHandler(os.Stdout, http.HandlerFunc(context.PutResults))).
 		Methods("PUT")
 	r.PathPrefix("/static/js/").Handler(
 		http.StripPrefix("/static/js/", setHeader("Content-Type", "application/javascript", http.FileServer(http.Dir("./static/js/")))))

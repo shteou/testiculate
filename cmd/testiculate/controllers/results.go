@@ -16,9 +16,9 @@ func validateServiceName(s string) bool {
 	return true
 }
 
-// TestServiceGetHandler returns all test result sets for the given service
+// GetResults returns all test result sets for the given service
 //   Request -> Response<[]Result>
-func (c *Context) TestServiceGetHandler(w http.ResponseWriter, r *http.Request) {
+func (c *Context) GetResultsByService(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	serviceName := params["service"]
@@ -43,9 +43,9 @@ func (c *Context) TestServiceGetHandler(w http.ResponseWriter, r *http.Request) 
 	json.NewEncoder(w).Encode(results)
 }
 
-// TestPrGetHandler returns all test result sets for the given service and PR tuple
+// GetResultsByServicePr returns all test result sets for the given service and PR tuple
 //   Request -> Response<[]Result>
-func (c *Context) TestPrGetHandler(w http.ResponseWriter, r *http.Request) {
+func (c *Context) GetResultsByServicePr(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	serviceName := params["service"]
@@ -78,9 +78,9 @@ func (c *Context) TestPrGetHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(results)
 }
 
-// TestBuildGetHandler returns all test result sets for the given service, PR and build triple
+// GetResultsByServicePrBuid returns all test result sets for the given service, PR and build triple
 //   Request -> Response<[]Result>
-func (c *Context) TestBuildGetHandler(w http.ResponseWriter, r *http.Request) {
+func (c *Context) GetResultsByServicePrBuid(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	serviceName := params["service"]
@@ -120,10 +120,10 @@ func (c *Context) TestBuildGetHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(results)
 }
 
-// TestsHandler accepts a JUnit XML object and ingests the result set into the database
+// PutResults accepts a JUnit XML object and ingests the result set into the database
 // The endpoint automatically creates records for unknown service defnitions
 //   Request -> Response
-func (c *Context) TestsHandler(w http.ResponseWriter, r *http.Request) {
+func (c *Context) PutResults(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	serviceName := params["service"]
